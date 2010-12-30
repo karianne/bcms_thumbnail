@@ -4,12 +4,22 @@ module ActionView
   module Helpers
     module_function
     
-    def thumbnail_to_fill(attachment_obj,width,height, quality = 85)
+
+    def thumbnail_to_fill(attachment_obj,width,height, quality = 85, gravity = "Center")
       thumbnail_engine(attachment_obj, "fill_#{width}x#{height}_#{quality}") do |image|
+
         image.quality quality
-        image.resize "#{width}x#{height}^"
-        image.gravity "Center"
-        image.crop "#{width}x#{height}+0+0"
+        cols, rows = image[:dimensions]
+        image.combine_options do |cmd|
+          if width != cols || height != rows
+            scale = [width/cols.to_f, height/rows.to_f].max
+            cols = (scale * (cols + 0.5)).round
+            rows = (scale * (rows + 0.5)).round
+            cmd.resize "#{cols}x#{rows}"
+          end
+          cmd.gravity gravity
+          cmd.extent "#{width}x#{height}" if cols != width || rows != height
+        end
       end
     end
     
@@ -48,7 +58,7 @@ module ActionView
             FileUtils.chmod 0755, "#{RAILS_ROOT}/public/bcms_thumbnail_cache/"
             FileUtils.chmod 0755, "#{RAILS_ROOT}/public/bcms_thumbnail_cache/#{name}"
           end
-          image = MiniMagick::Image.from_file("#{RAILS_ROOT}/tmp/uploads/#{attachment_obj.attachment.file_location}")
+          image = MiniMagick::Image.open("#{RAILS_ROOT}/tmp/uploads/#{attachment_obj.attachment.file_location}")
           yield image
           image.write("#{RAILS_ROOT}/public#{thumbnail_location}")
           FileUtils.chmod 0644, "#{RAILS_ROOT}/public#{thumbnail_location}"
