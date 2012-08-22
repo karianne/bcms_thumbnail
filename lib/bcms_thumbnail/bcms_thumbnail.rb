@@ -29,6 +29,7 @@ module ActionView
     end
 
     def thumbnail_to_fit(attachment_obj,geometry = '100x100', quality = "85")
+      quality = quality.to_s
       #thumbnail_engine(attachment_obj, geometry, false, quality)
       thumbnail_engine(attachment_obj, "fit_#{geometry}_#{quality}") do |image|
         image.quality quality
@@ -37,6 +38,7 @@ module ActionView
     end
 
     def thumbnail_square(attachment_obj,geometry = '100', quality = "85")
+      quality = quality.to_s
       thumbnail_engine(attachment_obj, "square_#{geometry}_#{quality}") do |image|
         image.quality quality
           if image[:width] < image[:height]
