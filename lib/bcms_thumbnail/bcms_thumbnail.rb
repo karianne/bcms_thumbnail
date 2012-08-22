@@ -7,6 +7,7 @@ module ActionView
 
     def thumbnail_to_fill(attachment_obj,width,height, quality = "85", gravity = "Center")
       thumbnail_engine(attachment_obj, "fill_#{width}x#{height}_#{quality}") do |image|
+        quality = quality.to_s
 
         image.quality quality
         cols, rows = image[:dimensions]
