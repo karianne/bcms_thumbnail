@@ -3,9 +3,9 @@ require 'uri'
 module ActionView
   module Helpers
     module_function
-    
 
-    def thumbnail_to_fill(attachment_obj,width,height, quality = 85, gravity = "Center")
+
+    def thumbnail_to_fill(attachment_obj,width,height, quality = "85", gravity = "Center")
       thumbnail_engine(attachment_obj, "fill_#{width}x#{height}_#{quality}") do |image|
 
         image.quality quality
@@ -22,12 +22,12 @@ module ActionView
         end
       end
     end
-    
+
     def thumbnail(attachment_obj,geometry,quality)
       thumbnail_to_fit(attachment_obj,geometry,quality)
     end
-    
-    def thumbnail_to_fit(attachment_obj,geometry = '100x100', quality = 85)
+
+    def thumbnail_to_fit(attachment_obj,geometry = '100x100', quality = "85")
       #thumbnail_engine(attachment_obj, geometry, false, quality)
       thumbnail_engine(attachment_obj, "fit_#{geometry}_#{quality}") do |image|
         image.quality quality
@@ -35,7 +35,7 @@ module ActionView
       end
     end
 
-    def thumbnail_square(attachment_obj,geometry = '100', quality = 85)
+    def thumbnail_square(attachment_obj,geometry = '100', quality = "85")
       thumbnail_engine(attachment_obj, "square_#{geometry}_#{quality}") do |image|
         image.quality quality
           if image[:width] < image[:height]
