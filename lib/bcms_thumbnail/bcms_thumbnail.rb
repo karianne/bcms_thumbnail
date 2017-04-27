@@ -56,6 +56,7 @@ module ActionView
 
       puts("\nStarting thumbnail engine with args attachmnent_obj=#{attachment_obj.respond_to?(:title) ? attachment_obj.title : attachment_obj.inspect} and name=#{name}")
       logger.warn("I'm VISIBLE!!!")
+      logger.info("I'm info visible!!!")
 
       if ! attachment_obj.blank? && attachment_obj.respond_to?('attachment') && ['jpg','png','gif','bmp'].include?(attachment_obj.attachment.file_extension.downcase)
         thumbnail_location = "/bcms_thumbnail_cache/#{name}/#{attachment_obj.attachment.file_location.gsub(/[\\\/]/,'-')}.jpg"
