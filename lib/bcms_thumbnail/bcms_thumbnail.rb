@@ -53,20 +53,31 @@ module ActionView
     end
 
     def thumbnail_engine(attachment_obj, name = nil)
+
+      puts("\nStarting thumbnail engine with args attachmnent_obj=#{attachment_obj.respond_to?(:title) ? attachment_obj.title : attachment_obj.inspect} and name=#{name}")
+
       if ! attachment_obj.blank? && attachment_obj.respond_to?('attachment') && ['jpg','png','gif','bmp'].include?(attachment_obj.attachment.file_extension.downcase)
         thumbnail_location = "/bcms_thumbnail_cache/#{name}/#{attachment_obj.attachment.file_location.gsub(/[\\\/]/,'-')}.jpg"
+        puts("Thumbnail location: #{thumbnail_location}")
         if ! File.exists?("#{RAILS_ROOT}/public#{thumbnail_location}")
+          puts("FILE NOT FOUND")
           if ! File.exists?("#{RAILS_ROOT}/public/bcms_thumbnail_cache/#{name}")
+            puts("Mangler dir #{RAILS_ROOT}/public/bcms_thumbnail_cache/#{name}, oppretter...")
             FileUtils.mkdir_p("#{RAILS_ROOT}/public/bcms_thumbnail_cache/#{name}")
             FileUtils.chmod 0755, "#{RAILS_ROOT}/public/bcms_thumbnail_cache/"
             FileUtils.chmod 0755, "#{RAILS_ROOT}/public/bcms_thumbnail_cache/#{name}"
           end
-          image = MiniMagick::Image.open("#{RAILS_ROOT}/tmp/uploads/#{attachment_obj.attachment.file_location}")
+          original_file = "#{RAILS_ROOT}/tmp/uploads/#{attachment_obj.attachment.file_location}"
+          puts "\tOriginal file: #{original_file}"
+          image = MiniMagick::Image.open(original_file)
           yield image
-          image.write("#{RAILS_ROOT}/public#{thumbnail_location}")
+          new_file_location = "#{RAILS_ROOT}/public#{thumbnail_location}"
+          puts "\tWriting new file: #{new_file_location}"
+          image.write(new_file_location)
           FileUtils.chmod 0644, "#{RAILS_ROOT}/public#{thumbnail_location}"
           URI::escape(thumbnail_location)
         else
+          puts("FILE FOUND, no problem")
           URI::escape(thumbnail_location)
         end
       else
